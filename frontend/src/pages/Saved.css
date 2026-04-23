@@ -1,0 +1,35 @@
+/* ===== SAVED PAGE ===== */
+.saved-page {
+  padding-top: 100px;
+  min-height: 100vh;
+}
+
+.saved-page .section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.saved-page h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.saved-page .section-header p {
+  color: var(--text-secondary);
+}
+
+.saved-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+}
+
+.saved-empty .empty-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+.saved-empty p {
+  font-size: 1.1rem;
+}
