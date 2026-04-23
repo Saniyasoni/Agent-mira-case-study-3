@@ -17,13 +17,17 @@ app.use(express.json());
 // Initialize MongoDB and Start Server
 const startServer = async () => {
   try {
-    // Automatically create a local, in-memory MongoDB server
-    // This avoids needing to install or configure MongoDB locally!
-    const mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
+    let mongoUri = process.env.MONGODB_URI;
+
+    // If no external MongoDB URI is provided, spin up the local memory server
+    if (!mongoUri || mongoUri.includes("localhost")) {
+      console.log("No Atlas URI found. Starting local in-memory database...");
+      const mongoServer = await MongoMemoryServer.create();
+      mongoUri = mongoServer.getUri();
+    }
 
     await mongoose.connect(mongoUri);
-    console.log("Connected to Local In-Memory MongoDB successfully! 🚀");
+    console.log("Connected to MongoDB successfully! 🚀");
     
     // Routes
     app.use("/api/properties", propertiesRouter);
