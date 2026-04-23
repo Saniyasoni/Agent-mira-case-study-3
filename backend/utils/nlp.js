@@ -1,60 +1,52 @@
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+require("dotenv").config();
+
+// Initialize Gemini API
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+
 /**
- * Free Custom NLP Logic
- * Extracts location, budget, and bedrooms from natural language sentences.
+ * Uses Gemini LLM to extract property preferences from natural language.
  */
+async function extractPreferences(text) {
+  if (!process.env.GEMINI_API_KEY) {
+    console.warn("GEMINI_API_KEY not found. Please add it to your .env file.");
+    return {};
+  }
 
-const LOCATIONS = ["New York", "Miami", "Los Angeles", "Austin", "San Francisco", "Chicago", "Dallas", "Seattle", "Boston"];
+  const prompt = `
+    You are a real estate assistant. Extract property preferences from the following user message.
+    User Message: "${text}"
 
-function extractPreferences(text) {
-  const lowerText = text.toLowerCase();
-  let preferences = {};
+    Return ONLY a JSON object with these keys (if not found, use null):
+    - location (String)
+    - minPrice (Number)
+    - maxPrice (Number)
+    - bedrooms (Number)
+    - bathrooms (Number)
+    - minSize (Number, square feet)
+    - maxSize (Number, square feet)
+    - amenities (Array of Strings)
 
-  // 1. Extract Location
-  for (const loc of LOCATIONS) {
-    if (lowerText.includes(loc.toLowerCase())) {
-      preferences.location = loc;
-      break;
+    Example response:
+    {
+      "location": "Miami",
+      "maxPrice": 500000,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "amenities": ["pool", "gym"]
     }
+  `;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const jsonText = response.text().replace(/```json|```/g, "").trim();
+    return JSON.parse(jsonText);
+  } catch (error) {
+    console.error("LLM Extraction Error:", error);
+    return {};
   }
-
-  // 2. Extract Budget (looking for numbers near words like 'under', 'max', 'budget', 'k', 'million')
-  // Example matches: "under 600k", "max 500000", "1 million"
-  const budgetRegex = /(?:under|max|budget)?\s*\$?(\d+(?:\.\d+)?)\s*(k|m|million|thousand)?/g;
-  let match;
-  let maxPrice = null;
-
-  while ((match = budgetRegex.exec(lowerText)) !== null) {
-    let num = parseFloat(match[1]);
-    let multiplier = match[2];
-    
-    if (multiplier === 'k' || multiplier === 'thousand') {
-      num = num * 1000;
-    } else if (multiplier === 'm' || multiplier === 'million') {
-      num = num * 1000000;
-    } else if (num < 1000 && num > 10) {
-       // if someone says 'under 500' they probably mean 500k
-       num = num * 1000;
-    }
-    
-    // Assume the largest number found is the budget cap
-    if (!maxPrice || num > maxPrice) {
-        maxPrice = num;
-    }
-  }
-
-  if (maxPrice && maxPrice > 10000) { // arbitrary threshold to ignore small numbers
-    preferences.maxPrice = maxPrice;
-  }
-
-  // 3. Extract Bedrooms
-  // Example matches: "3 bed", "2 bedrooms", "4 bhk"
-  const bedRegex = /(\d+)\s*(?:bed|bedroom|beds|bhk)/;
-  const bedMatch = lowerText.match(bedRegex);
-  if (bedMatch) {
-    preferences.bedrooms = parseInt(bedMatch[1]);
-  }
-
-  return preferences;
 }
 
 module.exports = { extractPreferences };

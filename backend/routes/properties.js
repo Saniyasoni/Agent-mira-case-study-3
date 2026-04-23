@@ -32,7 +32,7 @@ router.get("/", (req, res) => {
 });
 
 // POST /api/properties/chat — NLP Chatbot Endpoint
-router.post("/chat", (req, res) => {
+router.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
     
@@ -40,8 +40,8 @@ router.post("/chat", (req, res) => {
       return res.status(400).json({ success: false, error: "Message is required" });
     }
 
-    // Extract preferences from natural language
-    const preferences = extractPreferences(message);
+    // Extract preferences from natural language using LLM
+    const preferences = await extractPreferences(message);
     
     // Filter properties based on extracted preferences
     const filteredProperties = filterProperties(preferences);
@@ -51,13 +51,18 @@ router.post("/chat", (req, res) => {
     
     const understood = [];
     if (preferences.location) understood.push(`in ${preferences.location}`);
-    if (preferences.bedrooms) understood.push(`with at least ${preferences.bedrooms} bedrooms`);
+    if (preferences.bedrooms) understood.push(`with ${preferences.bedrooms}+ bedrooms`);
+    if (preferences.bathrooms) understood.push(`with ${preferences.bathrooms}+ bathrooms`);
     if (preferences.maxPrice) understood.push(`under $${preferences.maxPrice.toLocaleString()}`);
+    if (preferences.minSize) understood.push(`at least ${preferences.minSize} sqft`);
+    if (preferences.amenities && preferences.amenities.length > 0) {
+      understood.push(`with ${preferences.amenities.join(", ")}`);
+    }
     
     if (understood.length > 0) {
       botReply = `I'm searching for properties ${understood.join(', ')}. `;
     } else {
-      botReply = "I couldn't detect specific preferences, so here are some popular options. You can try saying something like 'Show me 2 bed apartments in Miami under 500k'.";
+      botReply = "I couldn't detect specific preferences, so here are some popular options. Try saying something like 'Show me a 3 bed villa with a pool in Miami'.";
     }
 
     if (filteredProperties.length > 0) {
@@ -74,6 +79,7 @@ router.post("/chat", (req, res) => {
     });
 
   } catch (error) {
+    console.error("Chat Route Error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

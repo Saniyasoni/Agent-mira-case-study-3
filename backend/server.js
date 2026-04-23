@@ -18,16 +18,27 @@ app.use(express.json());
 const startServer = async () => {
   try {
     let mongoUri = process.env.MONGODB_URI;
+    let isAtlas = mongoUri && !mongoUri.includes("localhost") && mongoUri !== "PASTE_YOUR_CONNECTION_STRING_HERE";
 
-    // If no external MongoDB URI is provided, spin up the local memory server
-    if (!mongoUri || mongoUri.includes("localhost")) {
-      console.log("No Atlas URI found. Starting local in-memory database...");
-      const mongoServer = await MongoMemoryServer.create();
-      mongoUri = mongoServer.getUri();
+    if (isAtlas) {
+      console.log("Attempting to connect to MongoDB Atlas... ☁️");
+      try {
+        // Set a short timeout so it doesn't hang forever if DNS is blocked
+        await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
+        console.log("Connected to MongoDB Atlas successfully! ✅");
+      } catch (atlasError) {
+        console.error("Atlas connection failed (DNS/Network issue). Falling back to local database... ⚠️");
+        isAtlas = false;
+      }
     }
 
-    await mongoose.connect(mongoUri);
-    console.log("Connected to MongoDB successfully! 🚀");
+    if (!isAtlas) {
+      const mongoServer = await MongoMemoryServer.create();
+      const localUri = mongoServer.getUri();
+      await mongoose.connect(localUri);
+      console.log("Connected to Local In-Memory MongoDB successfully! 🚀");
+    }
+
     
     // Routes
     app.use("/api/properties", propertiesRouter);

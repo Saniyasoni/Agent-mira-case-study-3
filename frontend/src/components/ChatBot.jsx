@@ -9,6 +9,7 @@ function ChatBot({ savedIds, onSave, compareIds, onCompare }) {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const hasGreeted = useRef(false);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -17,6 +18,9 @@ function ChatBot({ savedIds, onSave, compareIds, onCompare }) {
 
   // Start conversation on mount
   useEffect(() => {
+    if (hasGreeted.current) return;
+    hasGreeted.current = true;
+
     addBotMessage(
       "Hi! I'm Mira, your smart real estate assistant. You can talk to me naturally! For example, try saying: 'Show me 3 bedroom homes in Miami under 500k'."
     );

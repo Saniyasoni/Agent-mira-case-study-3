@@ -66,6 +66,32 @@ function filterProperties(filters) {
     );
   }
 
+  if (filters.bathrooms) {
+    properties = properties.filter(
+      (p) => p.bathrooms >= Number(filters.bathrooms)
+    );
+  }
+
+  if (filters.minSize) {
+    properties = properties.filter(
+      (p) => p.size_sqft >= Number(filters.minSize)
+    );
+  }
+
+  if (filters.maxSize) {
+    properties = properties.filter(
+      (p) => p.size_sqft <= Number(filters.maxSize)
+    );
+  }
+
+  if (filters.amenities && Array.isArray(filters.amenities)) {
+    properties = properties.filter((p) =>
+      filters.amenities.every((amenity) =>
+        p.amenities.some((a) => a.toLowerCase().includes(amenity.toLowerCase()))
+      )
+    );
+  }
+
   return properties;
 }
 
