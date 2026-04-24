@@ -1,0 +1,43 @@
+# Agent Mira - Chatbot Test Cases
+
+These test cases are designed to verify the AI's ability to extract preferences and filter data accurately based on the current property database.
+
+---
+
+### Test Case 1: Location & Price
+- **User Query:** "Show me homes in New York under 500k"
+- **Expected Preferences:** { "location": "New York", "maxPrice": 500000 }
+- **Expected Results:**
+  1. ID 1: 3 BHK Apartment in Downtown ($450,000)
+  2. ID 6: Cozy Studio in Central Park ($300,000)
+
+### Test Case 2: Size & Amenities
+- **User Query:** "I want a property with at least 2000 sq ft and boat parking"
+- **Expected Preferences:** { "minSize": 2000, "amenities": ["boat parking"] }
+- **Expected Results:**
+  1. ID 7: Lakefront House with Dock (2000 sq ft, Boat Parking)
+
+### Test Case 3: Bed/Bath & Budget
+- **User Query:** "Find me a 3 bedroom home with 2 bathrooms under 800k in Dallas"
+- **Expected Preferences:** { "location": "Dallas", "bedrooms": 3, "bathrooms": 2, "maxPrice": 800000 }
+- **Expected Results:**
+  1. ID 8: Modern Townhouse with Backyard (3 Bed, 3 Bath - *Note: The filter is 'at least' so ID 8 matches*)
+
+### Test Case 4: Specific Amenities
+- **User Query:** "Show me houses with a private garden in LA"
+- **Expected Preferences:** { "location": "Los Angeles", "amenities": ["private garden"] }
+- **Expected Results:**
+  1. ID 3: Luxury Villa with Private Garden
+
+### Test Case 5: Modern Features & Size
+- **User Query:** "I'm looking for a smart home in Boston over 1500 sq ft"
+- **Expected Preferences:** { "location": "Boston", "minSize": 1500, "amenities": ["smart appliances"] }
+- **Expected Results:**
+  1. ID 10: Minimalist Smart Home (1900 sq ft, Smart Appliances)
+
+---
+### 🛠️ How to run these tests:
+1. Copy the **User Query** text.
+2. Paste it into the Agent Mira chatbot.
+3. Verify that the **Bot Reply** mentions the correct number of matches.
+4. Verify that the **Property Cards** displayed match the IDs listed above.
