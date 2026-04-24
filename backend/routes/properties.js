@@ -40,11 +40,21 @@ router.post("/chat", async (req, res) => {
       return res.status(400).json({ success: false, error: "Message is required" });
     }
 
-    // Extract preferences from natural language using LLM
+    // Extract preferences from natural language using AI
     const preferences = await extractPreferences(message);
     
-    // Filter properties based on extracted preferences
-    const filteredProperties = filterProperties(preferences);
+    // Check if any actual search parameters were found
+    const hasSearchFilters = preferences.location || 
+                             preferences.maxPrice || 
+                             preferences.minPrice || 
+                             preferences.bedrooms || 
+                             preferences.bathrooms || 
+                             preferences.minSize || 
+                             preferences.maxSize || 
+                             (preferences.amenities && preferences.amenities.length > 0);
+
+    // Filter properties ONLY if filters were found. Otherwise, return empty list for greetings.
+    const filteredProperties = hasSearchFilters ? filterProperties(preferences) : [];
     
     // Generate a conversational response
     let botReply = "";
@@ -53,8 +63,8 @@ router.post("/chat", async (req, res) => {
       // Use the AI's friendly conversational response
       botReply = preferences.reply;
       
-      // If properties were found, add a mention of them
-      if (filteredProperties.length > 0) {
+      // ONLY add the match count if we actually searched for something
+      if (hasSearchFilters && filteredProperties.length > 0) {
         botReply += ` (I found ${filteredProperties.length} matches!)`;
       }
     } else {
@@ -72,7 +82,7 @@ router.post("/chat", async (req, res) => {
       if (understood.length > 0) {
         botReply = `I'm searching for properties ${understood.join(', ')}. I found ${filteredProperties.length} matches!`;
       } else {
-        botReply = "I couldn't detect specific preferences, so here are some popular options. Try saying something like 'Show me a 3 bed villa with a pool in Miami'.";
+        botReply = "I couldn't detect specific preferences. Try saying something like 'Show me a 3 bed villa with a pool in Miami'.";
       }
     }
 
