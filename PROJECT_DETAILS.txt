@@ -1,0 +1,82 @@
+==================================================
+AGENT MIRA - REAL ESTATE AI CHATBOT
+==================================================
+
+PROJECT OVERVIEW
+----------------
+Agent Mira is a sophisticated, full-stack real estate application designed to bridge the gap between static property listings and personalized home searching. Instead of manually clicking filters, users can talk to "Mira," an AI assistant that understands natural language queries like "Find me a 3 BHK in Miami under 800k with a pool."
+
+TECHNICAL STACK
+---------------
+- Frontend: React.js (Vite) with Glassmorphism UI
+- Backend: Node.js & Express.js API
+- Database: MongoDB Atlas (Cloud) with Local In-Memory Fallback
+- AI Engine: Groq (Llama 3) + Google Gemini (Pro) + Custom Regex Fallback
+- Deployment: Vercel (Frontend) & Render (Backend)
+
+--------------------------------------------------
+BACKEND: HOW IT WORKS
+--------------------------------------------------
+
+1. server.js
+   - The heart of the backend.
+   - Sets up the Express server and handles the database connection logic.
+   - It is "Resilient": It tries to connect to MongoDB Atlas Cloud first; if the network is blocked, it automatically starts a local in-memory database so the app never crashes.
+
+2. utils/nlp.js (The "Brain")
+   - This is the most complex file in the project.
+   - It uses a "Triple-Layer Hybrid System":
+     Layer 1: Tries Groq (Llama 3) for lightning-fast AI extraction.
+     Layer 2: Tries Google Gemini if Groq is unavailable.
+     Layer 3: Uses a custom "Ultra-Smart Regex" engine if both AIs are offline.
+   - Work: It translates a human sentence like "I want a house with a garden" into a data object like { amenities: ["Private Garden"] }.
+
+3. utils/mergeData.js (The "Data Factory")
+   - Merges three separate JSON files (Basics, Characteristics, Images) into single, unified property objects.
+   - Contains the filtering logic that handles location, price, bedrooms, bathrooms, square footage, and amenities.
+
+4. routes/properties.js
+   - Handles API requests for searching properties.
+   - Contains the "/chat" endpoint which connects the frontend to the AI "Brain."
+
+5. routes/saved.js
+   - Manages the "Shortlist" or "Saved Properties" feature.
+   - Saves property IDs to MongoDB so the user doesn't lose them when they refresh.
+
+6. data/*.json
+   - The source of truth for all 10 property listings in the system.
+
+7. .env
+   - Stores secret keys (MongoDB URL, Groq Key, Gemini Key).
+
+--------------------------------------------------
+FRONTEND: HOW IT WORKS
+--------------------------------------------------
+
+1. src/services/api.js
+   - The bridge between the website and the server.
+   - It uses the VITE_API_URL to talk to the backend on Render.
+
+2. src/components/ChatBot.jsx
+   - The interactive chat interface. 
+   - Handles the message bubbles, typing indicators, and the "Smart Cards" that appear inside the chat.
+   - Includes a "Greeting Fix" using React Refs to ensure Mira only says hi once.
+
+3. src/components/PropertyCard.jsx
+   - The visual "card" for each home.
+   - Displays the image, price, location, and tags. Includes "Save" and "Compare" buttons.
+
+4. src/pages/Home.jsx & Chat.jsx
+   - Home.jsx: The landing page with a premium search bar.
+   - Chat.jsx: The dedicated full-page AI chat experience.
+
+5. src/pages/Compare.jsx & Saved.jsx
+   - Compare.jsx: A side-by-side comparison tool for up to 3 properties.
+   - Saved.jsx: Displays the properties the user has liked/shortlisted.
+
+--------------------------------------------------
+KEY INNOVATIONS
+--------------------------------------------------
+- "Unstoppable AI": The hybrid NLP ensures the bot works even if you run out of AI credits.
+- "DNS Resilience": The backend handles cloud connection failures gracefully without crashing.
+- "Unified Data": O(n) performance merging of multiple data sources for high efficiency.

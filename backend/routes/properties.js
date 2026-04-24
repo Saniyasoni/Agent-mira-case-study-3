@@ -46,29 +46,34 @@ router.post("/chat", async (req, res) => {
     // Filter properties based on extracted preferences
     const filteredProperties = filterProperties(preferences);
     
-    // Generate a conversational response based on what was understood
-    let botReply = "I looked for homes based on your message. ";
-    
-    const understood = [];
-    if (preferences.location) understood.push(`in ${preferences.location}`);
-    if (preferences.bedrooms) understood.push(`with ${preferences.bedrooms}+ bedrooms`);
-    if (preferences.bathrooms) understood.push(`with ${preferences.bathrooms}+ bathrooms`);
-    if (preferences.maxPrice) understood.push(`under $${preferences.maxPrice.toLocaleString()}`);
-    if (preferences.minSize) understood.push(`at least ${preferences.minSize} sqft`);
-    if (preferences.amenities && preferences.amenities.length > 0) {
-      understood.push(`with ${preferences.amenities.join(", ")}`);
-    }
-    
-    if (understood.length > 0) {
-      botReply = `I'm searching for properties ${understood.join(', ')}. `;
-    } else {
-      botReply = "I couldn't detect specific preferences, so here are some popular options. Try saying something like 'Show me a 3 bed villa with a pool in Miami'.";
-    }
+    // Generate a conversational response
+    let botReply = "";
 
-    if (filteredProperties.length > 0) {
-      botReply += `I found ${filteredProperties.length} matches!`;
+    if (preferences.reply) {
+      // Use the AI's friendly conversational response
+      botReply = preferences.reply;
+      
+      // If properties were found, add a mention of them
+      if (filteredProperties.length > 0) {
+        botReply += ` (I found ${filteredProperties.length} matches!)`;
+      }
     } else {
-      botReply += "Unfortunately, I couldn't find any properties matching those exact criteria.";
+      // Fallback to logic-based response if AI didn't provide a reply
+      const understood = [];
+      if (preferences.location) understood.push(`in ${preferences.location}`);
+      if (preferences.bedrooms) understood.push(`with ${preferences.bedrooms}+ bedrooms`);
+      if (preferences.bathrooms) understood.push(`with ${preferences.bathrooms}+ bathrooms`);
+      if (preferences.maxPrice) understood.push(`under $${preferences.maxPrice.toLocaleString()}`);
+      if (preferences.minSize) understood.push(`at least ${preferences.minSize} sqft`);
+      if (preferences.amenities && preferences.amenities.length > 0) {
+        understood.push(`with ${preferences.amenities.join(", ")}`);
+      }
+      
+      if (understood.length > 0) {
+        botReply = `I'm searching for properties ${understood.join(', ')}. I found ${filteredProperties.length} matches!`;
+      } else {
+        botReply = "I couldn't detect specific preferences, so here are some popular options. Try saying something like 'Show me a 3 bed villa with a pool in Miami'.";
+      }
     }
 
     res.json({

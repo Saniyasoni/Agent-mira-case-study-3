@@ -43,11 +43,31 @@ const amenityMap = {
  * 3. Ultra-Smart Regex (Final Fallback)
  */
 async function extractPreferences(text) {
-  let preferences = { amenities: [] };
+  let preferences = { amenities: [], reply: null };
   const prompt = `
-    Extract property preferences from: "${text}". 
-    Output ONLY a JSON object: {location, minPrice, maxPrice, bedrooms, bathrooms, minSize, maxSize, amenities:[]}
-    Do not include any other text. Use null for missing values.
+    You are Mira, a friendly real estate assistant. 
+    Analyze this user message: "${text}"
+
+    Your task is to extract property preferences AND provide a friendly conversational response.
+
+    RULES:
+    1. If the user says "Hi", "Hello", or "How are you", greet them warmly and ask what kind of home they seek.
+    2. If the user asks something unrelated to real estate, politely steer them back to house hunting.
+    3. If the user provides property details (location, price, beds, etc.), extract them into the JSON.
+    4. Output ONLY a valid JSON object. Do not include any other text.
+
+    REQUIRED JSON FORMAT:
+    {
+      "reply": "Your friendly response string here",
+      "location": "City name or null",
+      "minPrice": number or null,
+      "maxPrice": number or null,
+      "bedrooms": number or null,
+      "bathrooms": number or null,
+      "minSize": number or null,
+      "maxSize": number or null,
+      "amenities": ["amenity1", "amenity2"] or []
+    }
   `;
 
   // LAYER 1: TRY GROQ (Primary AI)
@@ -89,6 +109,12 @@ async function extractPreferences(text) {
 
   // LAYER 3: ULTRA-SMART REGEX FALLBACK (Unstoppable Mode)
   const lowerText = text.toLowerCase();
+  
+  // Basic Greeting Detection for Regex
+  if (lowerText.match(/hi|hello|hey|greetings/)) {
+    preferences.reply = "Hello! I'm Mira, your real estate assistant. How can I help you find your dream home today?";
+  }
+
   knownCities.forEach(city => {
     if (lowerText.includes(city.toLowerCase())) preferences.location = city;
   });
