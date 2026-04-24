@@ -54,9 +54,22 @@ async function extractPreferences(text) {
   const bathMatch = lowerText.match(/(\d+)\s*(?:bath|bathroom)/);
   if (bathMatch) preferences.bathrooms = parseInt(bathMatch[1]);
 
-  // Extract Amenities (Look for common keywords)
-  const commonAmenities = ["pool", "gym", "garden", "parking", "balcony", "security", "terrace"];
+  // Extract Amenities (Expanded List)
+  const commonAmenities = [
+    "pool", "gym", "garden", "parking", "balcony", "security", "terrace", 
+    "pet friendly", "office", "lake", "dock", "garage", "backyard", "ocean"
+  ];
   preferences.amenities = commonAmenities.filter(a => lowerText.includes(a));
+
+  // 3. General Search Fallback (If no specific filters found, treat words as search keywords)
+  if (!preferences.location && !preferences.maxPrice && !preferences.bedrooms && preferences.amenities.length === 0) {
+    // Exclude common stop words
+    const stopWords = ["show", "me", "find", "i", "want", "a", "an", "the", "in", "at", "for", "with", "house", "home", "property"];
+    const keywords = lowerText.split(/\s+/).filter(word => word.length > 2 && !stopWords.includes(word));
+    if (keywords.length > 0) {
+      preferences.search = keywords.join(" ");
+    }
+  }
 
   console.log("Regex Fallback Results:", preferences);
   return preferences;
