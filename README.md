@@ -2,6 +2,8 @@
 
 A full-stack real estate chatbot that helps users find homes based on their preferences. This application was built for the RealEstate Agent Case Study 3.
 
+**🔴 Live Demo:** [Check out the RealEstate Agent Chatbot here!](https://agent-mira-case-study-3.vercel.app/)
+
 ## ✨ Features
 
 - **Conversational AI (NLP)**: Understands natural language to extract location, budget, and bedroom preferences (e.g., "Find me a 3 bed house in Miami under 500k").
