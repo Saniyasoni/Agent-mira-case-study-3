@@ -45,7 +45,7 @@ const amenityMap = {
 async function extractPreferences(text) {
   let preferences = { amenities: [], reply: null };
   const prompt = `
-    You are Mira, a friendly real estate assistant. 
+    You are RealEstate Agent, a friendly real estate assistant. 
     Analyze this user message: "${text}"
 
     Your task is to extract property preferences AND provide a friendly conversational response.
@@ -63,6 +63,8 @@ async function extractPreferences(text) {
       "minPrice": number or null,
       "maxPrice": number or null,
       "bedrooms": number or null,
+      "minBedrooms" : number or null,
+      "maxBedrooms" : number or null,
       "bathrooms": number or null,
       "minSize": number or null,
       "maxSize": number or null,
@@ -109,10 +111,10 @@ async function extractPreferences(text) {
 
   // LAYER 3: ULTRA-SMART REGEX FALLBACK (Unstoppable Mode)
   const lowerText = text.toLowerCase();
-  
+
   // Basic Greeting Detection for Regex
   if (lowerText.match(/hi|hello|hey|greetings/)) {
-    preferences.reply = "Hello! I'm Mira, your real estate assistant. How can I help you find your dream home today?";
+    preferences.reply = "Hello! I'm RealEstate Agent, your real estate assistant. How can I help you find your dream home today?";
   }
 
   knownCities.forEach(city => {
@@ -138,7 +140,7 @@ async function extractPreferences(text) {
   const sizeMinMatch = lowerText.match(/(?:above|more than|min|at least|over)\s*(\d+)\s*(?:sqft|sq ft|square feet|feet)/);
   if (sizeMinMatch) preferences.minSize = parseInt(sizeMinMatch[1]);
 
-  const bedMatch = lowerText.match(/(\d+)\s*(?:bed|bhk|bedroom)/);
+  const bedMatch = lowerText.match(/(\d+)\s*(?:bed|under|max|bhk|bedroom)/);
   if (bedMatch) preferences.bedrooms = parseInt(bedMatch[1]);
   const bathMatch = lowerText.match(/(\d+)\s*(?:bath|bathroom)/);
   if (bathMatch) preferences.bathrooms = parseInt(bathMatch[1]);

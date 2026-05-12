@@ -1,7 +1,7 @@
 {
   "name": "agent-mira-backend",
   "version": "1.0.0",
-  "description": "Backend API for Agent Mira Real Estate Chatbot",
+  "description": "Backend API for RealEstate Agent Real Estate Chatbot",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

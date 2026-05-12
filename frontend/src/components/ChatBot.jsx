@@ -22,7 +22,7 @@ function ChatBot({ savedIds, onSave, compareIds, onCompare }) {
     hasGreeted.current = true;
 
     addBotMessage(
-      "Hi! I'm Mira, your smart real estate assistant. You can talk to me naturally! For example, try saying: 'Show me 3 bedroom homes in Miami under 500k'."
+      "Hi! I'm RealEstate Agent, your smart real estate assistant. You can talk to me naturally! For example, try saying: 'Show me 3 bedroom homes in Miami under 500k'."
     );
   }, []);
 
@@ -72,6 +72,7 @@ function ChatBot({ savedIds, onSave, compareIds, onCompare }) {
       setIsTyping(false);
       addBotMessage("Oops! My AI brain is having trouble connecting to the server. Is the backend running?");
     }
+    
   }
 
   function handleOptionClick(opt) {

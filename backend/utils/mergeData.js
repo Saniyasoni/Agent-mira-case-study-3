@@ -57,14 +57,25 @@ function filterProperties(filters) {
   }
 
   if (filters.maxPrice) {
-    properties = properties.filter((p) => p.price <= Number(filters.maxPrice));
+    properties = properties.filter(
+      (p) => p.price <= Number(filters.maxPrice));
   }
 
   if (filters.bedrooms) {
     properties = properties.filter(
-      (p) => p.bedrooms >= Number(filters.bedrooms)
-    );
+      (p) => p.bedrooms >= Number(filters.bedrooms));
   }
+
+  if(filters.minBedrooms){
+    properties = properties.filter(
+      (p) => p.bedrooms >= Number(filters.minBedrooms));
+    
+  }
+  if(filters.maxBedrooms){
+    properties = properties.filter(
+      (p) => p.bedrooms <= Number(filters.maxBedrooms));
+  }
+
 
   if (filters.bathrooms) {
     properties = properties.filter(

@@ -34,11 +34,11 @@ function Home({ savedIds, onSave, compareIds, onCompare }) {
           Find Your <span className="gradient-text">Dream Home</span>
         </h1>
         <p>
-          Chat with Mira, your AI-powered real estate assistant, to discover
+          Chat with RealEstate Agent, your AI-powered real estate assistant, to discover
           properties that match your lifestyle and budget.
         </p>
         <button className="hero-cta" onClick={() => navigate("/chat")}>
-          <IoChatbubbleEllipses /> Start Chatting with Mira
+          <IoChatbubbleEllipses /> Start Chatting with RealEstate Agent
         </button>
       </section>
 

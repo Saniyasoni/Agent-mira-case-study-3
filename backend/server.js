@@ -46,7 +46,7 @@ const startServer = async () => {
 
     // Health check route
     app.get("/", (req, res) => {
-      res.json({ message: "Agent Mira Real Estate Chatbot API is running!" });
+      res.json({ message: "RealEstate Agent Real Estate Chatbot API is running!" });
     });
 
     // Start server

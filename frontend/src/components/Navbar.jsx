@@ -8,7 +8,7 @@ function Navbar() {
       <div className="container">
         <NavLink to="/" className="navbar-brand">
           <span className="brand-icon">🏠</span>
-          <span className="gradient-text">Agent Mira</span>
+          <span className="gradient-text">RealEstate Agent</span>
         </NavLink>
         <ul className="navbar-links">
           <li>

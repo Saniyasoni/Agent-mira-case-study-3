@@ -1,4 +1,4 @@
-# Agent Mira - Chatbot Test Cases
+# RealEstate Agent - Chatbot Test Cases
 
 These test cases are designed to verify the AI's ability to extract preferences and filter data accurately based on the current property database.
 
@@ -38,6 +38,6 @@ These test cases are designed to verify the AI's ability to extract preferences 
 ---
 ### 🛠️ How to run these tests:
 1. Copy the **User Query** text.
-2. Paste it into the Agent Mira chatbot.
+2. Paste it into the RealEstate Agent chatbot.
 3. Verify that the **Bot Reply** mentions the correct number of matches.
 4. Verify that the **Property Cards** displayed match the IDs listed above.

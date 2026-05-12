@@ -35,34 +35,36 @@ router.get("/", (req, res) => {
 router.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
-    
+
     if (!message) {
       return res.status(400).json({ success: false, error: "Message is required" });
     }
 
     // Extract preferences from natural language using AI
     const preferences = await extractPreferences(message);
-    
+
     // Check if any actual search parameters were found
-    const hasSearchFilters = preferences.location || 
-                             preferences.maxPrice || 
-                             preferences.minPrice || 
-                             preferences.bedrooms || 
-                             preferences.bathrooms || 
-                             preferences.minSize || 
-                             preferences.maxSize || 
-                             (preferences.amenities && preferences.amenities.length > 0);
+    const hasSearchFilters = preferences.location ||
+      preferences.maxPrice ||
+      preferences.minPrice ||
+      preferences.bedrooms ||
+      preferences.minBedrooms||
+      preferences.maxBedrooms||
+      preferences.bathrooms ||
+      preferences.minSize ||
+      preferences.maxSize ||
+      (preferences.amenities && preferences.amenities.length > 0);
 
     // Filter properties ONLY if filters were found. Otherwise, return empty list for greetings.
     const filteredProperties = hasSearchFilters ? filterProperties(preferences) : [];
-    
+
     // Generate a conversational response
     let botReply = "";
 
     if (preferences.reply) {
       // Use the AI's friendly conversational response
       botReply = preferences.reply;
-      
+
       // ONLY add the match count if we actually searched for something
       if (hasSearchFilters && filteredProperties.length > 0) {
         botReply += ` (I found ${filteredProperties.length} matches!)`;
@@ -71,14 +73,22 @@ router.post("/chat", async (req, res) => {
       // Fallback to logic-based response if AI didn't provide a reply
       const understood = [];
       if (preferences.location) understood.push(`in ${preferences.location}`);
+
       if (preferences.bedrooms) understood.push(`with ${preferences.bedrooms}+ bedrooms`);
+      
+
+      if(preferences.minBedrooms) understood.push('with at least ${preferences.minBedrooms} bedrooms');
+      if(preferences.maxBedrooms)understood.push('with at most ${preferences.maxBedrooms} bedrooms');
+
+
+
       if (preferences.bathrooms) understood.push(`with ${preferences.bathrooms}+ bathrooms`);
       if (preferences.maxPrice) understood.push(`under $${preferences.maxPrice.toLocaleString()}`);
       if (preferences.minSize) understood.push(`at least ${preferences.minSize} sqft`);
       if (preferences.amenities && preferences.amenities.length > 0) {
         understood.push(`with ${preferences.amenities.join(", ")}`);
       }
-      
+
       if (understood.length > 0) {
         botReply = `I'm searching for properties ${understood.join(', ')}. I found ${filteredProperties.length} matches!`;
       } else {

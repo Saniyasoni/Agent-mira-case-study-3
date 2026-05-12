@@ -1,6 +1,6 @@
-# 🏠 Agent Mira - Real Estate Chatbot
+# 🏠 RealEstate Agent - Real Estate Chatbot
 
-A full-stack real estate chatbot that helps users find homes based on their preferences. This application was built for the Agent Mira Case Study 3.
+A full-stack real estate chatbot that helps users find homes based on their preferences. This application was built for the RealEstate Agent Case Study 3.
 
 ## ✨ Features
 
